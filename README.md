@@ -89,7 +89,7 @@ The API will be available at `http://localhost:8000`
 ### Authentication
 
 - **POST** `/api/login`
-  - Body: `{ "email": "user@example.com", "password": "password" }`
+  - Body: `{ "email": "welj@dev.com", "password": "jlabs123" }`
   - Returns: `{ "success": true, "user": {...}, "token": "..." }`
 
 - **POST** `/api/logout` (Requires Authentication)
