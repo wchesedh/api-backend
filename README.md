@@ -20,7 +20,7 @@ Laravel API backend for IP geolocation lookup application with user authenticati
 
 - PHP >= 8.1
 - Composer
-- MySQL/PostgreSQL
+- MySQL
 - Node.js & NPM (for frontend assets)
 
 ## Installation
@@ -28,7 +28,7 @@ Laravel API backend for IP geolocation lookup application with user authenticati
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/wchesedh/api-backend.git
 cd api-backend
 ```
 
