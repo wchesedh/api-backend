@@ -73,8 +73,8 @@ php artisan db:seed --class=UserSeeder
 ```
 
 Default test user credentials (from UserSeeder):
-- **Email**: `test@example.com`
-- **Password**: `password`
+- **Email**: `welj@dev.com`
+- **Password**: `jlabs123`
 
 ### 7. Start the Server
 
@@ -89,7 +89,7 @@ The API will be available at `http://localhost:8000`
 ### Authentication
 
 - **POST** `/api/login`
-  - Body: `{ "email": "user@example.com", "password": "password" }`
+  - Body: `{ "email": "welj@dev.com", "password": "jlabs123" }`
   - Returns: `{ "success": true, "user": {...}, "token": "..." }`
 
 - **POST** `/api/logout` (Requires Authentication)

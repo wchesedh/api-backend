@@ -23,7 +23,7 @@ Route::get('/ip-info/{ip}', [App\Http\Controllers\Api\IpInfoController::class, '
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
-        return $request->user();
+    return $request->user();
     });
     
     Route::get('/ip-history', [App\Http\Controllers\Api\IpHistoryController::class, 'index']);
