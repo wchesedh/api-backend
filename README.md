@@ -73,8 +73,8 @@ php artisan db:seed --class=UserSeeder
 ```
 
 Default test user credentials (from UserSeeder):
-- **Email**: `test@example.com`
-- **Password**: `password`
+- **Email**: `welj@dev.com`
+- **Password**: `jlabs123`
 
 ### 7. Start the Server
 
