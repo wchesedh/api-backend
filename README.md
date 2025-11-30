@@ -1,66 +1,204 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# IP Geolocation API Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel API backend for IP geolocation lookup application with user authentication and search history management.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **User Authentication** - Login with email and password using Laravel Sanctum
+- **IP Geolocation Proxy** - Proxy endpoint for ipinfo.io API with caching to avoid rate limits
+- **Search History Management** - Store and manage IP search history per user
+- **RESTful API** - Clean API endpoints for frontend integration
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Laravel 10** - PHP web framework
+- **Laravel Sanctum** - API authentication
+- **MySQL/PostgreSQL** - Database
+- **Guzzle HTTP** - For external API calls
 
-## Learning Laravel
+## Prerequisites
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP >= 8.1
+- Composer
+- MySQL/PostgreSQL
+- Node.js & NPM (for frontend assets)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Clone the Repository
 
-## Laravel Sponsors
+```bash
+git clone <your-repo-url>
+cd api-backend
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 2. Install Dependencies
 
-### Premium Partners
+```bash
+composer install
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### 3. Environment Setup
 
-## Contributing
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Configure Database
 
-## Code of Conduct
+Edit `.env` file and set your database credentials:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
 
-## Security Vulnerabilities
+### 5. Run Migrations
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan migrate
+```
+
+### 6. Seed Database
+
+Create a test user for login:
+
+```bash
+php artisan db:seed --class=UserSeeder
+```
+
+Default test user credentials (from UserSeeder):
+- **Email**: `test@example.com`
+- **Password**: `password`
+
+### 7. Start the Server
+
+```bash
+php artisan serve
+```
+
+The API will be available at `http://localhost:8000`
+
+## API Endpoints
+
+### Authentication
+
+- **POST** `/api/login`
+  - Body: `{ "email": "user@example.com", "password": "password" }`
+  - Returns: `{ "success": true, "user": {...}, "token": "..." }`
+
+- **POST** `/api/logout` (Requires Authentication)
+  - Headers: `Authorization: Bearer {token}`
+  - Revokes the current access token
+
+### IP Information
+
+- **GET** `/api/ip-info` (Public)
+  - Returns current user's IP geolocation information
+  - Cached for 5 minutes to reduce API calls
+
+- **GET** `/api/ip-info/{ip}` (Public)
+  - Returns geolocation information for specific IP address
+  - Cached for 5 minutes
+
+### IP Search History (Requires Authentication)
+
+- **GET** `/api/ip-history`
+  - Headers: `Authorization: Bearer {token}`
+  - Returns user's IP search history (last 50 entries)
+
+- **POST** `/api/ip-history`
+  - Headers: `Authorization: Bearer {token}`
+  - Body: `{ "ip": "8.8.8.8", "city": "...", "region": "...", "country": "...", "loc": "..." }`
+  - Creates or updates IP search history entry
+
+- **DELETE** `/api/ip-history`
+  - Headers: `Authorization: Bearer {token}`
+  - Body: `{ "ids": [1, 2, 3] }`
+  - Deletes selected history entries
+
+## Database Structure
+
+### Users Table
+- Standard Laravel users table with email and password authentication
+
+### ip_search_history Table
+- `id` - Primary key
+- `user_id` - Foreign key to users table
+- `ip` - IP address
+- `city` - City name
+- `region` - Region/State
+- `country` - Country code
+- `loc` - Latitude,Longitude coordinates
+- `created_at` - Timestamp
+- `updated_at` - Timestamp
+
+## CORS Configuration
+
+The API is configured to accept requests from `http://localhost:3000` (React frontend). CORS settings are in `config/cors.php`.
+
+## External Dependencies
+
+- **ipinfo.io API** - Used for IP geolocation data
+  - Free tier available (with rate limits)
+  - API calls are proxied through this backend to avoid CORS issues
+  - Responses are cached for 5 minutes
+
+## Project Structure
+
+```
+api-backend/
+├── app/
+│   └── Http/
+│       └── Controllers/
+│           └── Api/
+│               ├── AuthController.php      # Login/Logout
+│               ├── IpInfoController.php    # IP geolocation proxy
+│               └── IpHistoryController.php # History management
+├── database/
+│   ├── migrations/
+│   │   └── 2024_01_01_000000_create_ip_search_history_table.php
+│   └── seeders/
+│       └── UserSeeder.php                 # Test user seeder
+├── routes/
+│   └── api.php                            # API routes
+└── config/
+    └── cors.php                            # CORS configuration
+```
+
+## Testing
+
+Run the test suite:
+
+```bash
+php artisan test
+```
+
+## Important Notes
+
+### Frontend Repository
+
+This is the **API Backend** repository. The React frontend is in a separate repository:
+
+**Frontend Repository**: [https://github.com/wchesedh/react-frontend.git](https://github.com/wchesedh/react-frontend.git)
+
+**To run the complete application:**
+1. Start this Laravel API backend on `http://localhost:8000`
+2. Start the React frontend (see frontend repository README)
+3. The frontend will connect to the API automatically
+
+### Environment Variables
+
+Make sure to configure these in your `.env` file:
+- Database credentials
+- `APP_URL` - Your application URL
+- `SANCTUM_STATEFUL_DOMAINS` - If using stateful authentication
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
